@@ -32,6 +32,7 @@ class Entity;
 class Component;
 
 using ComponentID = std::size_t;
+using GroupID = std::size_t;
 constexpr ComponentID maxComponent = 32;
 using ComponentBitSet = std::bitset<maxComponent>;
 using ComponentArray = std::array<Component*, maxComponent>;

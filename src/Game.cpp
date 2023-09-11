@@ -5,18 +5,13 @@
 #include "ECS/Components.h"
 
 
-Map* map1;
 Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 std::vector<ColliderComponent*> Game::colliders;
 
-
 auto& player(manager.addEntity());
-auto& wall(manager.addEntity());
-auto& tile0(manager.addEntity());
-auto& tile1(manager.addEntity());
-auto& tile2(manager.addEntity());
+
 
 Game::Game()
 {
@@ -52,29 +47,12 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		// 启动游戏
 		isRunning = true;
 	}
-	
-	//player1 = new GameObject("assets/11.png", 0, 0);
-	//player2 = new GameObject("assets/22.png", 300, 300);
-	//player1->init();
-	//player2->init();
-	map1 = new Map();
-
 	// 对player Entity插入组件
-	
+	Map::LoadMap("assets/pyxel_16x16.map", 16, 16);
 	player.addComponent<TransformComponent>(2);
 	player.addComponent<SpriteComponent>("assets/11.png");
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
-	wall.addComponent<TransformComponent>(100.0f, 300.0f, 300, 32, 1);
-	wall.addComponent<SpriteComponent>("assets/wall.png");
-	wall.addComponent<ColliderComponent>("wall");
-
-	tile0.addComponent<TileComponent>(200, 100, 64, 32, 0);
-	//tile0.addComponent<ColliderComponent>("nitu");
-	tile1.addComponent<TileComponent>(200, 200, 64, 32, 1);
-	tile1.addComponent<ColliderComponent>("cao");
-	tile2.addComponent<TileComponent>(200, 300, 64, 32, 2);
-	tile2.addComponent<ColliderComponent>("qiang");
 }
 
 void Game::handleEvents()
@@ -110,18 +88,10 @@ void Game::update()
 {
 	manager.refresh();
 	manager.update();	
-	if (Collision::AABB(player.getComponent<ColliderComponent>(),
-		wall.getComponent<ColliderComponent>()))
-	{
-		player.getComponent<TransformComponent>().velocity * -1;
 
-	}
 	for (auto a : colliders)
 	{
-		Collision::AABB(player.getComponent<ColliderComponent>(), *a);
-		
-			
-		
+		Collision::AABB(player.getComponent<ColliderComponent>(), *a);	
 	}
 	
 }
@@ -146,5 +116,6 @@ void Game::clean()
 
 void Game::AddTile(int id, int x, int y)
 {
-
+	auto& tile(manager.addEntity());
+	tile.addComponent<TileComponent>(x, y, 32, 32, id);
 }

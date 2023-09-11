@@ -7,6 +7,5 @@ public:
 	Map();
 	~Map();
 	// this is new map system
-	void LoadMap(std::string path, int sizeX, int sizeY);
-
+	static void LoadMap(std::string path, int sizeX, int sizeY);
 };
