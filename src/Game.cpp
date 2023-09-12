@@ -12,6 +12,13 @@ std::vector<ColliderComponent*> Game::colliders;
 
 auto& player(manager.addEntity());
 
+enum  groupLabels : std::size_t
+{
+	groupMap,
+	groupPlayers,
+	groupEnemies,
+	groupColliders
+};
 
 Game::Game()
 {
@@ -53,6 +60,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	player.addComponent<SpriteComponent>("assets/11.png");
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
+	player.addGroup(groupPlayers);//将entity加入到它们各自的group中，然后按顺序渲染
 }
 
 void Game::handleEvents()
@@ -83,7 +91,6 @@ void Game::handleEvents()
 	}
 }
 
-
 void Game::update()
 {
 	manager.refresh();
@@ -96,13 +103,27 @@ void Game::update()
 	
 }
 
+auto& tiles(manager.getGroup(groupMap));
+auto& players(manager.getGroup(groupPlayers));
+auto& enemies(manager.getGroup(groupEnemies));
+
 void Game::render()
 {
 	// 注意Render的顺序很重要，若最后加载map，则map会覆盖在人物上面
 	SDL_RenderClear(renderer);
-	//SDL_RenderCopy(renderer, backgroundTexture, nullptr, nullptr);
-	//map1->DrawMap();
-	manager.draw();
+	// manager.draw();
+	for (auto& t : tiles)
+	{
+		t->draw();
+	}
+	for (auto& p : players)
+	{
+		p->draw();
+	}
+	for (auto& e : enemies)
+	{
+		e->draw();
+	}
 	SDL_RenderPresent(renderer);
 }
 
@@ -118,4 +139,5 @@ void Game::AddTile(int id, int x, int y)
 {
 	auto& tile(manager.addEntity());
 	tile.addComponent<TileComponent>(x, y, 32, 32, id);
+	tile.addGroup(groupMap);
 }
