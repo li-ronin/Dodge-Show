@@ -5,9 +5,11 @@ class KeyboardController : public Component
 {
 public:
 	TransformComponent* transform;
+	SpriteComponent* sprite;
 	void init() override
 	{
-		transform = &(entity->getComponent<TransformComponent>());
+		transform = &entity->getComponent<TransformComponent>();
+		sprite = &entity->getComponent<SpriteComponent>();
 	}
 	void update()  override
 	{
@@ -22,6 +24,7 @@ public:
 			case SDLK_a:
 				std::cout << "a" << std::endl;
 				transform->velocity.x = -1;
+				sprite->change("assets/left.png", 3, 100);
 				break;
 			case SDLK_s:
 				std::cout << "s" << std::endl;
@@ -30,6 +33,7 @@ public:
 			case SDLK_d:
 				std::cout << "d" << std::endl;
 				transform->velocity.x = 1;
+				sprite->change("assets/right.png", 3, 100);
 				break;
 			default:
 				break;

@@ -57,7 +57,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	// 对player Entity插入组件
 	Map::LoadMap("assets/pyxel_16x16.map", 16, 16);
 	player.addComponent<TransformComponent>(2);
-	player.addComponent<SpriteComponent>("assets/11.png");
+	player.addComponent<SpriteComponent>("assets/right.png",3,100);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);//将entity加入到它们各自的group中，然后按顺序渲染

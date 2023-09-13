@@ -90,8 +90,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2-staticd.lib;Gdi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\SDL2\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2-staticd.lib;SDL2_image.lib;Gdi32.lib;User32.lib;Shell32.lib;Winmm.lib;Setupapi.lib;Advapi32.lib;Ole32.lib;Version.lib;Imm32.lib;OleAut32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\SDL2\Debug;$(SolutionDir)dependencies\SDL_image\VisualC\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -111,9 +111,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2-staticd.lib;Gdi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2-staticd.lib;SDL2_image.lib;Gdi32.lib;User32.lib;Shell32.lib;Winmm.lib;Setupapi.lib;Advapi32.lib;Ole32.lib;Version.lib;Imm32.lib;OleAut32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\SDL2\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\SDL2\Release;$(SolutionDir)dependencies\SDL_image\VisualC\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -128,8 +128,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2-staticd.lib;Gdi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\SDL2\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2-staticd.lib;SDL2_image.lib;Gdi32.lib;User32.lib;Shell32.lib;Winmm.lib;Setupapi.lib;Advapi32.lib;Ole32.lib;Version.lib;Imm32.lib;OleAut32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\SDL2\Debug;$(SolutionDir)dependencies\SDL_image\VisualC\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -149,9 +149,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2-staticd.lib;Gdi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2-staticd.lib;SDL2_image.lib;Gdi32.lib;User32.lib;Shell32.lib;Winmm.lib;Setupapi.lib;Advapi32.lib;Ole32.lib;Version.lib;Imm32.lib;OleAut32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\SDL2\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\SDL2\Release;$(SolutionDir)dependencies\SDL_image\VisualC\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -178,6 +178,10 @@
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\TextureManager.h" />
     <ClInclude Include="src\Vector2D.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\OneDrive\桌面\left.png" />
+    <Image Include="..\..\OneDrive\桌面\right.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
