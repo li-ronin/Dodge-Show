@@ -24,7 +24,7 @@ public:
 			case SDLK_a:
 				std::cout << "a" << std::endl;
 				transform->velocity.x = -1;
-				sprite->change("assets/left.png", 3, 100);
+				sprite->Play("left");	
 				break;
 			case SDLK_s:
 				std::cout << "s" << std::endl;
@@ -33,7 +33,7 @@ public:
 			case SDLK_d:
 				std::cout << "d" << std::endl;
 				transform->velocity.x = 1;
-				sprite->change("assets/right.png", 3, 100);
+				sprite->Play("right");
 				break;
 			default:
 				break;
