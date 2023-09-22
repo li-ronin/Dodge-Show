@@ -4,12 +4,11 @@
 #include "Collision.h"
 #include "ECS/Components.h"
 
-
+const char* mapfile="assets/map.png";
 Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 std::vector<ColliderComponent*> Game::colliders;
-
 auto& player(manager.addEntity());
 
 enum  groupLabels : std::size_t
@@ -55,7 +54,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		isRunning = true;
 	}
 	// 对player Entity插入组件
-	Map::LoadMap("assets/pyxel_16x16.map", 16, 16);
+	Map::LoadMap("assets/map.map", 25, 20);
 	player.addComponent<TransformComponent>(2);
 	player.addComponent<SpriteComponent>("assets/timo.png", true);
 	player.addComponent<KeyboardController>();
@@ -135,9 +134,9 @@ void Game::clean()
 	std::cout << "Game Cleaned" << std::endl;
 }
 
-void Game::AddTile(int id, int x, int y)
+void Game::AddTile(int srcX, int srcY, int xpos, int ypos)
 {
 	auto& tile(manager.addEntity());
-	tile.addComponent<TileComponent>(x, y, 32, 32, id);
+	tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, mapfile);
 	tile.addGroup(groupMap);
 }
