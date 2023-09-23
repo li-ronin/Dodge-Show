@@ -4,11 +4,14 @@
 #include "Collision.h"
 #include "ECS/Components.h"
 
+
+
 const char* mapfile="assets/map.png";
 Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 std::vector<ColliderComponent*> Game::colliders;
+bool Game::isRunning = false;
 auto& player(manager.addEntity());
 
 enum  groupLabels : std::size_t
@@ -18,6 +21,9 @@ enum  groupLabels : std::size_t
 	groupEnemies,
 	groupColliders
 };
+auto& players(manager.getGroup(groupPlayers));
+auto& tiles(manager.getGroup(groupMap));
+auto& enemies(manager.getGroup(groupEnemies));
 
 Game::Game()
 {
@@ -53,13 +59,14 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		// 启动游戏
 		isRunning = true;
 	}
-	// 对player Entity插入组件
+
 	Map::LoadMap("assets/map.map", 25, 20);
 	player.addComponent<TransformComponent>(2);
 	player.addComponent<SpriteComponent>("assets/timo.png", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
-	player.addGroup(groupPlayers);//将entity加入到它们各自的group中，然后按顺序渲染
+	// 将entity加入到它们各自的group中，然后按顺序渲染
+	player.addGroup(groupPlayers);
 }
 
 void Game::handleEvents()
@@ -72,7 +79,7 @@ void Game::handleEvents()
 		break;
 	case SDL_KEYDOWN:
 		// 按ESC切换全屏模式
-		if (event.key.keysym.sym == SDLK_ESCAPE)
+		if (event.key.keysym.sym == SDLK_f)
 		{
 			Uint32 flags = SDL_GetWindowFlags(window);
 			if (flags & SDL_WINDOW_FULLSCREEN)
@@ -94,17 +101,22 @@ void Game::update()
 {
 	manager.refresh();
 	manager.update();	
-
-	for (auto a : colliders)
-	{
-		Collision::AABB(player.getComponent<ColliderComponent>(), *a);	
+	Vector2D playerVelocity = player.getComponent<TransformComponent>().velocity;
+	int playerSpeed = player.getComponent<TransformComponent>().speed;
+	// tiles是vector<Entity*>
+	for(auto t : tiles)
+	{	
+		t->getComponent<TileComponent>().destRect.x -= playerVelocity.x * playerSpeed;
+		t->getComponent<TileComponent>().destRect.y -= playerVelocity.y * playerSpeed;
 	}
+	// 判断player是否遇到障碍物
+	//for (auto a : colliders)
+	//{
+	//	Collision::AABB(player.getComponent<ColliderComponent>(), *a);	
+	//}
 	
 }
 
-auto& tiles(manager.getGroup(groupMap));
-auto& players(manager.getGroup(groupPlayers));
-auto& enemies(manager.getGroup(groupEnemies));
 
 void Game::render()
 {
@@ -138,5 +150,6 @@ void Game::AddTile(int srcX, int srcY, int xpos, int ypos)
 {
 	auto& tile(manager.addEntity());
 	tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, mapfile);
+	//将entity加入到它们各自的group中，然后按顺序渲染
 	tile.addGroup(groupMap);
 }

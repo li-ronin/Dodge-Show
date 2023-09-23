@@ -5,9 +5,12 @@
 class TileComponent : public Component
 {
 public :
-
+	// 皮肤
 	SDL_Texture* texture;
-	SDL_Rect srcRect, destRect;
+	// 资源图片的位置 和 宽高（截取）
+	SDL_Rect srcRect;
+	// 显示在屏幕中的位置 和 宽高
+	SDL_Rect destRect;
 
 	TileComponent() = default;
 	~TileComponent()

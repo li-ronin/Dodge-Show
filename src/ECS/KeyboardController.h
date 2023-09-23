@@ -18,22 +18,21 @@ public:
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_w:
-				std::cout << "w" << std::endl;
 				transform->velocity.y = -1;
 				break;
 			case SDLK_a:
-				std::cout << "a" << std::endl;
 				transform->velocity.x = -1;
 				sprite->Play("left");	
 				break;
 			case SDLK_s:
-				std::cout << "s" << std::endl;
 				transform->velocity.y = 1;
 				break;
 			case SDLK_d:
-				std::cout << "d" << std::endl;
 				transform->velocity.x = 1;
 				sprite->Play("right");
+				break;
+			case SDLK_ESCAPE:
+				Game::isRunning = false;
 				break;
 			default:
 				break;
