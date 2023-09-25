@@ -67,8 +67,29 @@ public:
 			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks()/speed)%frames);
 		}
 		srcRect.y = animIndex * transform->height;//animIndex表示帧数在PNG中的第几行
-		destRect.x = static_cast<int>(transform->position.x);
-		destRect.y = static_cast<int>(transform->position.y);
+		// static_cast<int>(transform->position.x)- Game::camera.x让player的速度和相机相同，但是降低了player的速度
+		if (static_cast<int>(transform->position.x) < Game::camera.x)
+		{
+			destRect.x = Game::camera.x;
+		}
+		else if (static_cast<int>(transform->position.x) > 1600)
+		{
+			destRect.x = Game::camera.w - 64;
+		}
+		else
+		{
+			destRect.x = static_cast<int>(transform->position.x) - Game::camera.x ;
+		}
+		if (static_cast<int>(transform->position.y) < Game::camera.y)
+		{
+			destRect.y = Game::camera.y;
+		}else if (static_cast<int>(transform->position.y) > 1280)
+		{
+			destRect.y = Game::camera.h - 64;
+		}else
+		{
+			destRect.y = static_cast<int>(transform->position.y) - Game::camera.y ;
+		}
 		destRect.w = transform->width * transform->scale;
 		destRect.h = transform->height * transform->scale;
 	}

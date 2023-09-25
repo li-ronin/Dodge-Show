@@ -6,12 +6,15 @@
 
 
 
-const char* mapfile="assets/map.png";
-Manager manager;
+
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
+SDL_Rect Game::camera{0, 0, 800, 640};
 std::vector<ColliderComponent*> Game::colliders;
 bool Game::isRunning = false;
+
+const char* mapfile = "assets/map.png";
+Manager manager;
 auto& player(manager.addEntity());
 
 enum  groupLabels : std::size_t
@@ -101,14 +104,13 @@ void Game::update()
 {
 	manager.refresh();
 	manager.update();	
-	Vector2D playerVelocity = player.getComponent<TransformComponent>().velocity;
-	int playerSpeed = player.getComponent<TransformComponent>().speed;
-	// tiles是vector<Entity*>
-	for(auto t : tiles)
-	{	
-		t->getComponent<TileComponent>().destRect.x -= playerVelocity.x * playerSpeed;
-		t->getComponent<TileComponent>().destRect.y -= playerVelocity.y * playerSpeed;
-	}
+	camera.x = player.getComponent<TransformComponent>().position.x - 400;
+	camera.y = player.getComponent<TransformComponent>().position.y - 320;
+	if (camera.x < 0) camera.x = 0;
+	if (camera.y < 0) camera.y = 0;
+	if (camera.x > camera.w) camera.x = camera.w;
+	if (camera.y > camera.h) camera.y = camera.h;
+
 	// 判断player是否遇到障碍物
 	//for (auto a : colliders)
 	//{

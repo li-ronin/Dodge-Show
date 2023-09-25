@@ -12,7 +12,7 @@ int main(int argc, const char* argv[])
 	int frameTime;
 
 	game = new Game();
-	game->init("Engine", 1280, 720, false);     // 800*640   1280*720
+	game->init("Engine", 800, 640, false);     // 800*640   1280*720
 	while (game->running())
 	{
 		frameStart = SDL_GetTicks();
