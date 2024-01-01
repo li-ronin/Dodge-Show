@@ -3,11 +3,12 @@
 #include<stdio.h>
 #include<iostream>
 #include<vector>
-#include"SDL2/SDL.h"
-#include"SDL_image.h"
-
-// 这里只能用声明，引ColliderComponent的头文件会有循环依赖冲突，导致Game类及所有成员在其他文件中不可用
+#include "SDL2/SDL.h"
+#include "SDL_image.h"
+//#include "AssetManager.h"
+// 杩欓噷鍙兘鐢ㄥ０鏄庯紝寮旵olliderComponent鐨勫ご鏂囦欢浼氭湁寰幆渚濊禆鍐茬獊锛屽鑷碐ame绫诲強鎵�鏈夋垚鍛樺湪鍏朵粬鏂囦欢涓笉鍙敤
 class ColliderComponent; 
+class AssetManager;
 
 class Game
 {
@@ -24,15 +25,23 @@ public:
 	{
 		return isRunning;
 	}
-	static void AddTile(int srcX, int srcY, int xpos, int ypos);
+
 	static SDL_Renderer* renderer;
 	static SDL_Event event;
-	static std::vector<ColliderComponent*> colliders;
+	//static std::vector<ColliderComponent*> colliders;
 	static bool isRunning;
 	static SDL_Rect camera;
+	static AssetManager* assets;
+
+	enum  groupLabels : std::size_t
+	{
+		groupMap,
+		groupPlayers,
+		groupColliders
+	};
+
 private:
 	int count;
 	SDL_Window* window;
 	SDL_Texture* backgroundTexture;
-	
 };

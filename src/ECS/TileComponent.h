@@ -1,35 +1,36 @@
 #pragma once
 #include"ECS.h"
 #include"SDL2/SDL.h"
-
-// Í¼¿é
+#include "../AssetManager.h"
+// å›¾å—
 class TileComponent : public Component
 {
 public :
-	// Æ¤·ô
+	// çš®è‚¤
 	SDL_Texture* texture;
-	// ×ÊÔ´Í¼Æ¬µÄÎ»ÖÃ ºÍ ¿í¸ß£¨½ØÈ¡£©
+	// èµ„æºå›¾ç‰‡çš„ä½ç½® å’Œ å®½é«˜ï¼ˆæˆªå–ï¼‰
 	SDL_Rect srcRect;
-	// ÏÔÊ¾ÔÚÆÁÄ»ÖĞµÄÎ»ÖÃ ºÍ ¿í¸ß
+	// æ˜¾ç¤ºåœ¨å±å¹•ä¸­çš„ä½ç½® å’Œ å®½é«˜
 	SDL_Rect destRect;
-	// Í¼¿éµÄÎ»ÖÃ
+	// å›¾å—çš„ä½ç½®
 	Vector2D tilePos;
 	TileComponent() = default;
 	~TileComponent()
 	{
 		SDL_DestroyTexture(texture);
 	}
-	TileComponent(int srcX, int srcY, int xpos, int ypos, const char* path)
+	TileComponent(int srcX, int srcY, int xpos, int ypos, int tilesize, int tilescale, std::string texID)
 	{
 
-		texture = TextureManager::LoadTexture(path);
+		//texture = TextureManager::LoadTexture(path);
+		texture = Game::assets->GetTexture(texID);
 		srcRect.x = srcX;
 		srcRect.y = srcY;
-		srcRect.w = srcRect.h = 32;
+		srcRect.w = srcRect.h = tilesize;
 
 		destRect.x = xpos;
 		destRect.y = ypos;
-		destRect.w = destRect.h = 64;
+		destRect.w = destRect.h = tilesize * tilescale;
 
 		tilePos.x = xpos;
 		tilePos.y = ypos;
@@ -38,7 +39,7 @@ public :
 
 	void update() override
 	{
-		// cameraµÄ(x, y)ÊÇÏà¶ÔÎ»ÖÃµÄÆğÊ¼×ø±ê
+		// cameraçš„(x, y)æ˜¯ç›¸å¯¹ä½ç½®çš„èµ·å§‹åæ ‡
 		destRect.x = tilePos.x - Game::camera.x;
 		destRect.y = tilePos.y - Game::camera.y;
 	}

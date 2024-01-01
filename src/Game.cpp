@@ -10,23 +10,17 @@
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 SDL_Rect Game::camera{0, 0, 800, 640};
-std::vector<ColliderComponent*> Game::colliders;
+//std::vector<ColliderComponent*> Game::colliders;
 bool Game::isRunning = false;
 
-const char* mapfile = "assets/map.png";
 Manager manager;
+AssetManager* Game::assets = new AssetManager(&manager);
 auto& player(manager.addEntity());
 
-enum  groupLabels : std::size_t
-{
-	groupMap,
-	groupPlayers,
-	groupEnemies,
-	groupColliders
-};
-auto& players(manager.getGroup(groupPlayers));
-auto& tiles(manager.getGroup(groupMap));
-auto& enemies(manager.getGroup(groupEnemies));
+
+auto& players(manager.getGroup(Game::groupPlayers));
+auto& tiles(manager.getGroup(Game::groupMap));
+auto& collisions(manager.getGroup(Game::groupColliders));
 
 Game::Game()
 {
@@ -40,35 +34,42 @@ Game::~Game()
 
 void Game::init(const char* title, int width, int height, bool fullscreen)
 {
-	// È«ÆÁ
+	// å…¨å±
 	int flags = 0;
 	if (fullscreen)
 	{
 		flags = SDL_WINDOW_FULLSCREEN;
 	}
-	// ³õÊ¼»¯
+	// åˆå§‹åŒ–
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		// ´´½¨´°¿Ú
+		// åˆ›å»ºçª—å£
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
-		// ´´½¨äÖÈ¾Æ÷
+		// åˆ›å»ºæ¸²æŸ“å™¨
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		if (renderer)
 		{
-			// ÉèÖÃäÖÈ¾Æ÷µÄÑÕÉ«
+			// è®¾ç½®æ¸²æŸ“å™¨çš„é¢œè‰²
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		}
 		//backgroundTexture = IMG_LoadTexture(renderer, "assets/map.png");
-		// Æô¶¯ÓÎÏ·
+		// å¯åŠ¨æ¸¸æˆ
 		isRunning = true;
 	}
+	
+	assets->AddTexture("terrain", "assets/map.png");
+	assets->AddTexture("player", "assets/timo1.png");
 
-	Map::LoadMap("assets/map.map", 25, 20);
-	player.addComponent<TransformComponent>(2);
-	player.addComponent<SpriteComponent>("assets/timo.png", true);
-	player.addComponent<KeyboardController>();
+	//const char* mapfile = "assets/map.png";
+	Map* map = new Map("terrain", 2, 32);
+	map->LoadMap("assets/map.map", 25, 20);
+
+	player.addComponent<TransformComponent>(0, 0, 150, 150, 0.7);
+	player.addComponent<SpriteComponent>("player", true);
+	//player.addComponent<KeyboardController>();
+	player.addComponent<MouseController>();
 	player.addComponent<ColliderComponent>("player");
-	// ½«entity¼ÓÈëµ½ËüÃÇ¸÷×ÔµÄgroupÖĞ£¬È»ºó°´Ë³ĞòäÖÈ¾
+	// å°†entityåŠ å…¥åˆ°å®ƒä»¬å„è‡ªçš„groupä¸­ï¼Œç„¶åæŒ‰é¡ºåºæ¸²æŸ“
 	player.addGroup(groupPlayers);
 }
 
@@ -81,17 +82,17 @@ void Game::handleEvents()
 		isRunning = false;
 		break;
 	case SDL_KEYDOWN:
-		// °´ESCÇĞ»»È«ÆÁÄ£Ê½
+		// æŒ‰ESCåˆ‡æ¢å…¨å±æ¨¡å¼
 		if (event.key.keysym.sym == SDLK_f)
 		{
 			Uint32 flags = SDL_GetWindowFlags(window);
 			if (flags & SDL_WINDOW_FULLSCREEN)
 			{
-				SDL_SetWindowFullscreen(window, 0);						// ÇĞ»»µ½´°¿ÚÄ£Ê½
+				SDL_SetWindowFullscreen(window, 0);						// åˆ‡æ¢åˆ°çª—å£æ¨¡å¼
 			}
 			else
 			{
-				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN); // ÇĞ»»µ½È«ÆÁÄ£Ê½
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN); // åˆ‡æ¢åˆ°å…¨å±æ¨¡å¼
 			}
 		}
 		break;
@@ -102,8 +103,20 @@ void Game::handleEvents()
 
 void Game::update()
 {
+	SDL_Rect playerCollider = player.getComponent<ColliderComponent>().collider;
+	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 	manager.refresh();
 	manager.update();	
+
+	for (auto& c : collisions)
+	{
+		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+		if (Collision::AABB(cCol, playerCollider))
+		{
+			player.getComponent<TransformComponent>().position = playerPos;
+		}
+	}
+
 	camera.x = player.getComponent<TransformComponent>().position.x - 400;
 	camera.y = player.getComponent<TransformComponent>().position.y - 320;
 	if (camera.x < 0) camera.x = 0;
@@ -111,7 +124,7 @@ void Game::update()
 	if (camera.x > camera.w) camera.x = camera.w;
 	if (camera.y > camera.h) camera.y = camera.h;
 
-	// ÅĞ¶ÏplayerÊÇ·ñÓöµ½ÕÏ°­Îï
+	// åˆ¤æ–­playeræ˜¯å¦é‡åˆ°éšœç¢ç‰©
 	//for (auto a : colliders)
 	//{
 	//	Collision::AABB(player.getComponent<ColliderComponent>(), *a);	
@@ -122,21 +135,22 @@ void Game::update()
 
 void Game::render()
 {
-	// ×¢ÒâRenderµÄË³ĞòºÜÖØÒª£¬Èô×îºó¼ÓÔØmap£¬Ôòmap»á¸²¸ÇÔÚÈËÎïÉÏÃæ
+	// æ³¨æ„Renderçš„é¡ºåºå¾ˆé‡è¦ï¼Œè‹¥æœ€ååŠ è½½mapï¼Œåˆ™mapä¼šè¦†ç›–åœ¨äººç‰©ä¸Šé¢
 	SDL_RenderClear(renderer);
 	// manager.draw();
 	for (auto& t : tiles)
 	{
 		t->draw();
 	}
+	for (auto& c : collisions)
+	{
+		c->draw();
+	}
 	for (auto& p : players)
 	{
 		p->draw();
 	}
-	for (auto& e : enemies)
-	{
-		e->draw();
-	}
+
 	SDL_RenderPresent(renderer);
 }
 
@@ -146,12 +160,4 @@ void Game::clean()
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
 	std::cout << "Game Cleaned" << std::endl;
-}
-
-void Game::AddTile(int srcX, int srcY, int xpos, int ypos)
-{
-	auto& tile(manager.addEntity());
-	tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, mapfile);
-	//½«entity¼ÓÈëµ½ËüÃÇ¸÷×ÔµÄgroupÖĞ£¬È»ºó°´Ë³ĞòäÖÈ¾
-	tile.addGroup(groupMap);
 }

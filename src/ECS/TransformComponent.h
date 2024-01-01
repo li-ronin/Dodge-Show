@@ -8,19 +8,19 @@ class TransformComponent : public Component
 public:
 	Vector2D position;
 	Vector2D velocity;
-
+	Vector2D mousePos;
 	int height = 32;
 	int width = 32;
-	int scale = 1;
+	float scale = 1;     // çŽ©å®¶å¤§å°
 
 	int speed = 10;
 	TransformComponent() 
 	{
 		position.Zero();
 	}
-	TransformComponent(int sc)
+	TransformComponent(float sc)
 	{
-		// ³õÊ¼»¯Íæ¼ÒÎ»ÖÃ 800*640
+		// åˆå§‹åŒ–çŽ©å®¶ä½ç½® 800*640
 		//position.Zero();
 		position.x = 400;
 		position.y = 320;
@@ -31,7 +31,7 @@ public:
 		position.x = x;
 		position.y = y;
 	}
-	TransformComponent(float x, float y, int h, int w, int sc)
+	TransformComponent(float x, float y, int h, int w, float sc)
 	{
 		position.x = x;
 		position.y = y;
@@ -45,8 +45,30 @@ public:
 	}
 	void update() override
 	{
-		position.x += velocity.x * speed;
-		position.y += velocity.y * speed;
+		//position.x += velocity.x * speed;
+		//position.y += velocity.y * speed;
+		float deltaX = mousePos.x - position.x;
+		float deltaY = mousePos.y - position.y;
+		float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
+		if (distance > speed)
+		{
+			float ratio = speed / distance;
+			position.x += (ratio * deltaX);
+			position.y += (ratio * deltaY);
+		}
+		else
+		{
+			position.x = mousePos.x;
+			position.y = mousePos.y;
+		}
+		if (distance != 0)
+		{
+			std::cout << distance << std::endl;
+			std::cout << "mousePos: " << mousePos.x << ", " << mousePos.y << std::endl;
+			std::cout << "position: " << position.x << ", " << position.y << std::endl;
+			std::cout << "-----------------" << std::endl;
+		}
+
 	}
 
 };

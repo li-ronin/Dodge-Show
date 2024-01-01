@@ -1,13 +1,14 @@
 #pragma once
 #include"Components.h"
 #include"../TextureManager.h"
+#include"../AssetManager.h"
 #include"SDL2/SDL.h"
 #include"SDL_image.h"
 #include"Animation.h"
 #include<map>
 /*
-* SpriteComponentÀà¿ÉÄÜ°üº¬äÖÈ¾ËùĞèµÄÎÆÀí¡¢Î»ÖÃĞÅÏ¢¡¢³ß´çµÈ¡£
-* Ëü¸ºÔğ½«ÊµÌå³ÊÏÖÎª¿É¼ûµÄÍ¼ĞÎ¡£ ÓÃÓÚäÖÈ¾Íæ¼Ò½ÇÉ«µÄÍâ¹Û
+* SpriteComponentç±»å¯èƒ½åŒ…å«æ¸²æŸ“æ‰€éœ€çš„çº¹ç†ã€ä½ç½®ä¿¡æ¯ã€å°ºå¯¸ç­‰ã€‚
+* å®ƒè´Ÿè´£å°†å®ä½“å‘ˆç°ä¸ºå¯è§çš„å›¾å½¢ã€‚ ç”¨äºæ¸²æŸ“ç©å®¶è§’è‰²çš„å¤–è§‚
 */
 
 class SpriteComponent : public Component 
@@ -17,8 +18,8 @@ private:
 	SDL_Texture* texture;
 	SDL_Rect srcRect, destRect;
 	bool animated = false;
-	int frames = 0;		// Ö¡Êı
-	int speed = 100;	// Ã¿Ö¡Ö®¼äµÄÑÓ³Ù£¬µ¥Î»ms
+	int frames = 0;		// å¸§æ•°
+	int speed = 100;	// æ¯å¸§ä¹‹é—´çš„å»¶è¿Ÿï¼Œå•ä½ms
 	
 public:
 	int animIndex = 0;
@@ -28,7 +29,7 @@ public:
 	{
 		setTex(path);
 	}
-	SpriteComponent(const char* path, bool isAnimated)
+	SpriteComponent(std::string texID, bool isAnimated)
 	{
 		animated = isAnimated;
 		Animation right(0, 3, 100);
@@ -38,16 +39,16 @@ public:
 		
 		//Play("left");
 		Play("right");
-		setTex(path);
+		setTex(texID);
 	}
 	~SpriteComponent()
 	{
-		SDL_DestroyTexture(texture);
+		//SDL_DestroyTexture(texture);
 	}
 
-	void setTex(const char* path)
+	void setTex(std::string texID)
 	{
-		texture = TextureManager::LoadTexture(path);
+		texture = Game::assets->GetTexture(texID);
 	}
 
 	void init() override
@@ -66,8 +67,8 @@ public:
 		{
 			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks()/speed)%frames);
 		}
-		srcRect.y = animIndex * transform->height;//animIndex±íÊ¾Ö¡ÊıÔÚPNGÖĞµÄµÚ¼¸ĞĞ
-		// static_cast<int>(transform->position.x)- Game::camera.xÈÃplayerµÄËÙ¶ÈºÍÏà»úÏàÍ¬£¬µ«ÊÇ½µµÍÁËplayerµÄËÙ¶È
+		srcRect.y = animIndex * transform->height;//animIndexè¡¨ç¤ºå¸§æ•°åœ¨PNGä¸­çš„ç¬¬å‡ è¡Œ
+		// static_cast<int>(transform->position.x)- Game::camera.xè®©playerçš„é€Ÿåº¦å’Œç›¸æœºç›¸åŒï¼Œä½†æ˜¯é™ä½äº†playerçš„é€Ÿåº¦
 		if (static_cast<int>(transform->position.x) < Game::camera.x)
 		{
 			destRect.x = Game::camera.x;
@@ -80,6 +81,7 @@ public:
 		{
 			destRect.x = static_cast<int>(transform->position.x) - Game::camera.x ;
 		}
+
 		if (static_cast<int>(transform->position.y) < Game::camera.y)
 		{
 			destRect.y = Game::camera.y;
@@ -90,8 +92,9 @@ public:
 		{
 			destRect.y = static_cast<int>(transform->position.y) - Game::camera.y ;
 		}
-		destRect.w = transform->width * transform->scale;
-		destRect.h = transform->height * transform->scale;
+
+		destRect.w = transform->width* transform->scale;
+		destRect.h = transform->height* transform->scale;
 	}
 	void draw() override
 	{
@@ -103,6 +106,5 @@ public:
 		frames = animations[animName].frames;
 		animIndex = animations[animName].index;
 		speed = animations[animName].speed;
-		
 	}
 };
