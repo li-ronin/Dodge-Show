@@ -64,7 +64,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	Map* map = new Map("terrain", 2, 32);
 	map->LoadMap("assets/map.map", 25, 20);
 
-	player.addComponent<TransformComponent>(0, 0, 150, 150, 0.7);
+	player.addComponent<TransformComponent>(400, 320, 150, 150, 0.7);
 	player.addComponent<SpriteComponent>("player", true);
 	//player.addComponent<KeyboardController>();
 	player.addComponent<MouseController>();
@@ -82,7 +82,7 @@ void Game::handleEvents()
 		isRunning = false;
 		break;
 	case SDL_KEYDOWN:
-		// 按ESC切换全屏模式
+		// 按F切换全屏模式
 		if (event.key.keysym.sym == SDLK_f)
 		{
 			Uint32 flags = SDL_GetWindowFlags(window);
