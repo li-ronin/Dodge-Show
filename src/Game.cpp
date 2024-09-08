@@ -5,8 +5,6 @@
 #include "ECS/Components.h"
 
 
-
-
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 SDL_Rect Game::camera{0, 0, 800, 640};
